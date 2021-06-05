@@ -11,8 +11,8 @@ import (
 const (
 	powerPercent80Display = "🔋 ⬆️ 80%"
 	powerPercent20Display = "🔋 ⬇️ 20%"
-	powerUpperLimit       = 59
-	powerLowerLimit       = 58
+	powerUpperLimit       = 79
+	powerLowerLimit       = 21
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	)
 
 	for {
-		fmt.Println(bInfo)
+		// fmt.Println(bInfo)
 		switch bInfo.state {
 		case "AC attached", "charging":
 			acAttachingNotified = false
