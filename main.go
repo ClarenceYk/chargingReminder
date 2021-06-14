@@ -23,7 +23,6 @@ func main() {
 	)
 
 	for {
-		// log.Println(bInfo)
 		switch bInfo.state {
 		case "AC attached", "charging":
 			acAttachingNotified = false
@@ -48,7 +47,9 @@ func main() {
 		}
 
 		time.Sleep(time.Second * 5)
+
 		bInfo = getBatteryInfo()
+		log.Println("battery info:", bInfo)
 	}
 }
 
