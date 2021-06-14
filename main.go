@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"log"
 	"os/exec"
 	"strconv"
 	"time"
@@ -23,13 +23,13 @@ func main() {
 	)
 
 	for {
-		// fmt.Println(bInfo)
+		// log.Println(bInfo)
 		switch bInfo.state {
 		case "AC attached", "charging":
 			acAttachingNotified = false
 
 			if bInfo.powerPercent >= powerUpperLimit && !dischargingNotified {
-				fmt.Println("run charging notify")
+				log.Println("run charging notify")
 				runCommands(getChargingTo80Notify())
 				dischargingNotified = true
 			}
@@ -37,12 +37,12 @@ func main() {
 			dischargingNotified = false
 
 			if bInfo.powerPercent <= powerLowerLimit && !acAttachingNotified {
-				fmt.Println("run drop notify")
+				log.Println("run drop notify")
 				runCommands(getDropTo20Notify())
 				acAttachingNotified = true
 			}
 		default:
-			fmt.Println("unknown battery state: [" + bInfo.state + "]")
+			log.Println("unknown battery state: [" + bInfo.state + "]")
 			dischargingNotified = false
 			acAttachingNotified = false
 		}
@@ -65,20 +65,20 @@ func getBatteryInfo() batteryInfo {
 
 	out, err := powerSourceShow.Output()
 	if err != nil {
-		fmt.Println("run:", powerSourceShow.String(), "error:", err)
+		log.Println("run:", powerSourceShow.String(), "error:", err)
 		return bi
 	}
 
 	out = bytes.TrimSpace(out)
 	lines := bytes.Split(out, []byte{'\n'})
 	if len(lines) < 2 {
-		fmt.Println("run:", powerSourceShow.String(), "error:", "number of output lines less than 2")
+		log.Println("run:", powerSourceShow.String(), "error:", "number of output lines less than 2")
 		return bi
 	}
 
 	fields := bytes.Split(lines[1], []byte{';'})
 	if len(fields) < 2 {
-		fmt.Println("run:", powerSourceShow.String(), "error:", "number of fields less than 2")
+		log.Println("run:", powerSourceShow.String(), "error:", "number of fields less than 2")
 		return bi
 	}
 
@@ -107,7 +107,7 @@ func getChargingTo80Notify() []*exec.Cmd {
 	}
 }
 
-func getDropTo20Notify () []*exec.Cmd {
+func getDropTo20Notify() []*exec.Cmd {
 	return []*exec.Cmd{
 		exec.Command("osascript", "-e", "display notification \""+powerPercent20Display+"\""),
 		exec.Command("afplay", "/System/Library/Sounds/Ping.aiff", "-v", "6"),
